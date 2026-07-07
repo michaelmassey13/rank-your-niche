@@ -3,12 +3,13 @@ import { StoreProvider, useStore } from "./store";
 import Sidebar from "./components/Sidebar";
 import ListView from "./components/ListView";
 import NewListModal from "./components/NewListModal";
-import type { CategoryId } from "./types";
+import NewCategoryModal from "./components/NewCategoryModal";
 
 function AppShell() {
   const { getList } = useStore();
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
-  const [newListCategory, setNewListCategory] = useState<CategoryId | null>(null);
+  const [newListCategoryId, setNewListCategoryId] = useState<string | null>(null);
+  const [creatingCategory, setCreatingCategory] = useState(false);
 
   const selectedList = selectedListId ? getList(selectedListId) : undefined;
 
@@ -17,7 +18,8 @@ function AppShell() {
       <Sidebar
         selectedListId={selectedListId}
         onSelectList={setSelectedListId}
-        onNewList={(categoryId) => setNewListCategory(categoryId)}
+        onNewList={(categoryId) => setNewListCategoryId(categoryId)}
+        onNewCategory={() => setCreatingCategory(true)}
         onListDeleted={(deletedId) => {
           if (deletedId === selectedListId) setSelectedListId(null);
         }}
@@ -27,26 +29,33 @@ function AppShell() {
           <ListView list={selectedList} />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="text-5xl">☕</div>
+            <div className="text-5xl">🏆</div>
             <h1 className="text-xl font-semibold text-stone-700 dark:text-stone-200">
               Pick a list, or start a new one
             </h1>
             <p className="max-w-sm text-sm text-stone-500 dark:text-stone-400">
-              Create lists for coffee shops, beans, or orders in the sidebar, define what
-              matters to you, and rank away.
+              Create a category for whatever you want to rank, add a list inside it,
+              define what matters to you, and rank away.
             </p>
           </div>
         )}
       </main>
 
-      {newListCategory && (
+      {newListCategoryId && (
         <NewListModal
-          categoryId={newListCategory}
-          onClose={() => setNewListCategory(null)}
+          categoryId={newListCategoryId}
+          onClose={() => setNewListCategoryId(null)}
           onCreated={(listId) => {
             setSelectedListId(listId);
-            setNewListCategory(null);
+            setNewListCategoryId(null);
           }}
+        />
+      )}
+
+      {creatingCategory && (
+        <NewCategoryModal
+          onClose={() => setCreatingCategory(false)}
+          onCreated={() => setCreatingCategory(false)}
         />
       )}
     </div>

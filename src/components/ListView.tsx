@@ -97,7 +97,7 @@ export default function ListView({ list }: { list: List }) {
                 />
               ) : (
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-lg dark:bg-stone-800">
-                  ☕
+                  🏷️
                 </div>
               )}
               <div className="min-w-0 flex-1">

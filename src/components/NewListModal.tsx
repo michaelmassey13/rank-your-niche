@@ -1,25 +1,18 @@
 import { useState } from "react";
-import { CATEGORIES, useStore } from "../store";
-import type { CategoryId } from "../types";
+import { useStore } from "../store";
 import Modal from "./Modal";
 
-const DEFAULT_CRITERIA: Record<CategoryId, string[]> = {
-  shops: ["Coffee Quality", "Ambiance", "Service", "Price"],
-  beans: ["Aroma", "Flavor", "Freshness", "Value"],
-  orders: ["Taste", "Temperature", "Presentation", "Worth It"],
-};
-
 interface NewListModalProps {
-  categoryId: CategoryId;
+  categoryId: string;
   onClose: () => void;
   onCreated: (listId: string) => void;
 }
 
 export default function NewListModal({ categoryId, onClose, onCreated }: NewListModalProps) {
-  const { createList } = useStore();
-  const category = CATEGORIES.find((c) => c.id === categoryId)!;
+  const { getCategory, createList } = useStore();
+  const category = getCategory(categoryId);
   const [name, setName] = useState("");
-  const [criteria, setCriteria] = useState<string[]>(DEFAULT_CRITERIA[categoryId]);
+  const [criteria, setCriteria] = useState<string[]>([]);
   const [criterionDraft, setCriterionDraft] = useState("");
   const [error, setError] = useState("");
 
@@ -52,7 +45,7 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
   }
 
   return (
-    <Modal onClose={onClose} title={`New ${category.singular} list`}>
+    <Modal onClose={onClose} title={`New list in "${category?.name ?? ""}"`}>
       <div className="flex flex-col gap-4">
         <label className="flex flex-col gap-1">
           <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
@@ -62,13 +55,7 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
             autoFocus
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={`e.g. ${
-              categoryId === "shops"
-                ? "Downtown Shops"
-                : categoryId === "beans"
-                  ? "Single Origin Beans"
-                  : "Cold Brew Orders"
-            }`}
+            placeholder="e.g. My Top Picks"
             className="rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
           />
         </label>
@@ -97,6 +84,11 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
                 </button>
               </span>
             ))}
+            {criteria.length === 0 && (
+              <span className="text-xs text-stone-400 dark:text-stone-600">
+                No criteria added yet
+              </span>
+            )}
           </div>
           <div className="mt-2 flex gap-2">
             <input
@@ -108,7 +100,7 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
                   addCriterion();
                 }
               }}
-              placeholder="Add a criterion (e.g. Crema)"
+              placeholder="Add a criterion (e.g. Quality, Price, Fun Factor)"
               className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
             />
             <button

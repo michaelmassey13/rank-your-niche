@@ -1,9 +1,7 @@
-export type CategoryId = "shops" | "beans" | "orders";
-
 export interface Category {
-  id: CategoryId;
-  label: string;
-  singular: string;
+  id: string;
+  name: string;
+  createdAt: number;
 }
 
 export interface Criterion {
@@ -27,7 +25,7 @@ export interface Item {
 
 export interface List {
   id: string;
-  categoryId: CategoryId;
+  categoryId: string;
   name: string;
   criteria: Criterion[];
   items: Item[];

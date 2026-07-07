@@ -8,37 +8,85 @@ import {
   type ReactNode,
 } from "react";
 import { v4 as uuid } from "uuid";
-import type { Category, CategoryId, Criterion, Item, List } from "./types";
+import type { Category, Criterion, Item, List } from "./types";
 
-export const CATEGORIES: Category[] = [
-  { id: "shops", label: "Coffee Shops", singular: "shop" },
-  { id: "beans", label: "Coffee Beans", singular: "bean" },
-  { id: "orders", label: "Coffee Orders", singular: "order" },
-];
-
-const STORAGE_KEY = "coffee-tier-app:v1";
+const STORAGE_KEY = "rank-your-niche:v1";
 
 interface StoreState {
+  categories: Category[];
   lists: List[];
 }
 
+function createSeedState(): StoreState {
+  const categoryId = uuid();
+  const listId = uuid();
+  const qualityId = uuid();
+  const valueId = uuid();
+  const vibeId = uuid();
+  const now = Date.now();
+
+  return {
+    categories: [{ id: categoryId, name: "Example: Coffee Shops", createdAt: now }],
+    lists: [
+      {
+        id: listId,
+        categoryId,
+        name: "Local Favorites",
+        criteria: [
+          { id: qualityId, name: "Coffee Quality" },
+          { id: valueId, name: "Value" },
+          { id: vibeId, name: "Vibe" },
+        ],
+        items: [
+          {
+            id: uuid(),
+            name: "Blue Bottle",
+            notes: "Reliable pour-over, a bit pricey.",
+            dateTried: null,
+            photo: null,
+            scores: { [qualityId]: 8.5, [valueId]: 6, [vibeId]: 8 },
+            createdAt: now,
+          },
+          {
+            id: uuid(),
+            name: "Corner Diner Coffee",
+            notes: "Cheap and fine for a quick cup.",
+            dateTried: null,
+            photo: null,
+            scores: { [qualityId]: 4, [valueId]: 9, [vibeId]: 5 },
+            createdAt: now,
+          },
+        ],
+        createdAt: now,
+      },
+    ],
+  };
+}
+
 function loadState(): StoreState {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return createSeedState();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { lists: [] };
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed.lists)) return { lists: [] };
-    return parsed;
+    return {
+      categories: Array.isArray(parsed.categories) ? parsed.categories : [],
+      lists: Array.isArray(parsed.lists) ? parsed.lists : [],
+    };
   } catch {
-    return { lists: [] };
+    return { categories: [], lists: [] };
   }
 }
 
 interface StoreApi {
+  categories: Category[];
   lists: List[];
-  listsByCategory: (categoryId: CategoryId) => List[];
+  getCategory: (categoryId: string) => Category | undefined;
+  createCategory: (name: string) => string;
+  renameCategory: (categoryId: string, name: string) => void;
+  deleteCategory: (categoryId: string) => void;
+  listsByCategory: (categoryId: string) => List[];
   getList: (listId: string) => List | undefined;
-  createList: (categoryId: CategoryId, name: string, criteriaNames: string[]) => string;
+  createList: (categoryId: string, name: string, criteriaNames: string[]) => string;
   deleteList: (listId: string) => void;
   renameList: (listId: string, name: string) => void;
   addCriterion: (listId: string, name: string) => void;
@@ -58,8 +106,38 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
+  const getCategory = useCallback(
+    (categoryId: string) => state.categories.find((c) => c.id === categoryId),
+    [state.categories]
+  );
+
+  const createCategory = useCallback((name: string) => {
+    const id = uuid();
+    setState((s) => ({
+      ...s,
+      categories: [...s.categories, { id, name: name.trim(), createdAt: Date.now() }],
+    }));
+    return id;
+  }, []);
+
+  const renameCategory = useCallback((categoryId: string, name: string) => {
+    setState((s) => ({
+      ...s,
+      categories: s.categories.map((c) =>
+        c.id === categoryId ? { ...c, name: name.trim() } : c
+      ),
+    }));
+  }, []);
+
+  const deleteCategory = useCallback((categoryId: string) => {
+    setState((s) => ({
+      categories: s.categories.filter((c) => c.id !== categoryId),
+      lists: s.lists.filter((l) => l.categoryId !== categoryId),
+    }));
+  }, []);
+
   const listsByCategory = useCallback(
-    (categoryId: CategoryId) => state.lists.filter((l) => l.categoryId === categoryId),
+    (categoryId: string) => state.lists.filter((l) => l.categoryId === categoryId),
     [state.lists]
   );
 
@@ -68,7 +146,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [state.lists]
   );
 
-  const createList = useCallback((categoryId: CategoryId, name: string, criteriaNames: string[]) => {
+  const createList = useCallback((categoryId: string, name: string, criteriaNames: string[]) => {
     const id = uuid();
     const criteria: Criterion[] = criteriaNames
       .map((n) => n.trim())
@@ -82,16 +160,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       items: [],
       createdAt: Date.now(),
     };
-    setState((s) => ({ lists: [...s.lists, list] }));
+    setState((s) => ({ ...s, lists: [...s.lists, list] }));
     return id;
   }, []);
 
   const deleteList = useCallback((listId: string) => {
-    setState((s) => ({ lists: s.lists.filter((l) => l.id !== listId) }));
+    setState((s) => ({ ...s, lists: s.lists.filter((l) => l.id !== listId) }));
   }, []);
 
   const renameList = useCallback((listId: string, name: string) => {
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) => (l.id === listId ? { ...l, name: name.trim() } : l)),
     }));
   }, []);
@@ -100,6 +179,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const trimmed = name.trim();
     if (!trimmed) return;
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) =>
         l.id === listId
           ? { ...l, criteria: [...l.criteria, { id: uuid(), name: trimmed }] }
@@ -110,6 +190,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const removeCriterion = useCallback((listId: string, criterionId: string) => {
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) =>
         l.id === listId
           ? { ...l, criteria: l.criteria.filter((c) => c.id !== criterionId) }
@@ -120,6 +201,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const renameCriterion = useCallback((listId: string, criterionId: string, name: string) => {
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) =>
         l.id === listId
           ? {
@@ -135,6 +217,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback((listId: string, item: Omit<Item, "id" | "createdAt">) => {
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) =>
         l.id === listId
           ? { ...l, items: [...l.items, { ...item, id: uuid(), createdAt: Date.now() }] }
@@ -146,6 +229,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const updateItem = useCallback(
     (listId: string, itemId: string, item: Omit<Item, "id" | "createdAt">) => {
       setState((s) => ({
+        ...s,
         lists: s.lists.map((l) =>
           l.id === listId
             ? {
@@ -163,6 +247,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const deleteItem = useCallback((listId: string, itemId: string) => {
     setState((s) => ({
+      ...s,
       lists: s.lists.map((l) =>
         l.id === listId ? { ...l, items: l.items.filter((i) => i.id !== itemId) } : l
       ),
@@ -171,7 +256,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<StoreApi>(
     () => ({
+      categories: state.categories,
       lists: state.lists,
+      getCategory,
+      createCategory,
+      renameCategory,
+      deleteCategory,
       listsByCategory,
       getList,
       createList,
@@ -185,7 +275,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       deleteItem,
     }),
     [
+      state.categories,
       state.lists,
+      getCategory,
+      createCategory,
+      renameCategory,
+      deleteCategory,
       listsByCategory,
       getList,
       createList,
