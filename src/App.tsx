@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { AuthProvider, useAuth } from "./auth";
 import { StoreProvider, useStore } from "./store";
+import Login from "./components/Login";
 import Sidebar from "./components/Sidebar";
 import ListView from "./components/ListView";
 import NewListModal from "./components/NewListModal";
@@ -62,10 +64,32 @@ function AppShell() {
   );
 }
 
-export default function App() {
+function Gate() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-stone-50 dark:bg-stone-950">
+        <div className="text-3xl animate-pulse">🏆</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login />;
+  }
+
   return (
-    <StoreProvider>
+    <StoreProvider userId={user.uid}>
       <AppShell />
     </StoreProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Gate />
+    </AuthProvider>
   );
 }

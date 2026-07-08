@@ -7,10 +7,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
+import { db } from "./firebase";
 import type { Category, Criterion, Item, List } from "./types";
-
-const STORAGE_KEY = "rank-your-niche:v1";
 
 interface StoreState {
   categories: Category[];
@@ -63,18 +63,12 @@ function createSeedState(): StoreState {
   };
 }
 
-function loadState(): StoreState {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return createSeedState();
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      categories: Array.isArray(parsed.categories) ? parsed.categories : [],
-      lists: Array.isArray(parsed.lists) ? parsed.lists : [],
-    };
-  } catch {
-    return { categories: [], lists: [] };
-  }
+function parseState(data: unknown): StoreState {
+  const parsed = (data ?? {}) as Partial<StoreState>;
+  return {
+    categories: Array.isArray(parsed.categories) ? parsed.categories : [],
+    lists: Array.isArray(parsed.lists) ? parsed.lists : [],
+  };
 }
 
 interface StoreApi {
@@ -99,12 +93,38 @@ interface StoreApi {
 
 const StoreContext = createContext<StoreApi | null>(null);
 
-export function StoreProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<StoreState>(loadState);
+export function StoreProvider({
+  userId,
+  children,
+}: {
+  userId: string;
+  children: ReactNode;
+}) {
+  const [state, setState] = useState<StoreState>({ categories: [], lists: [] });
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+    setLoaded(false);
+    const ref = doc(db, "users", userId);
+    let receivedFirstSnapshot = false;
+    const unsubscribe = onSnapshot(ref, (snapshot) => {
+      if (snapshot.exists()) {
+        setState(parseState(snapshot.data()));
+      } else if (!receivedFirstSnapshot) {
+        const seed = createSeedState();
+        setDoc(ref, seed);
+        setState(seed);
+      }
+      receivedFirstSnapshot = true;
+      setLoaded(true);
+    });
+    return unsubscribe;
+  }, [userId]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    setDoc(doc(db, "users", userId), state);
+  }, [userId, loaded, state]);
 
   const getCategory = useCallback(
     (categoryId: string) => state.categories.find((c) => c.id === categoryId),
@@ -294,6 +314,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       deleteItem,
     ]
   );
+
+  if (!loaded) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-stone-50 dark:bg-stone-950">
+        <div className="text-3xl animate-pulse">🏆</div>
+      </div>
+    );
+  }
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

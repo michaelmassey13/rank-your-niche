@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../auth";
 import { useStore } from "../store";
 
 interface SidebarProps {
@@ -17,6 +18,7 @@ export default function Sidebar({
   onListDeleted,
 }: SidebarProps) {
   const { categories, listsByCategory, deleteList, renameCategory, deleteCategory } = useStore();
+  const { user, signOut } = useAuth();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [categoryNameDraft, setCategoryNameDraft] = useState("");
@@ -157,6 +159,24 @@ export default function Sidebar({
             </div>
           );
         })}
+      </div>
+
+      <div className="flex items-center justify-between gap-2 border-t border-stone-200 px-3 py-2 dark:border-stone-800">
+        <div className="flex min-w-0 items-center gap-2">
+          {user?.photoURL && (
+            <img src={user.photoURL} alt="" className="h-6 w-6 shrink-0 rounded-full" />
+          )}
+          <span className="truncate text-xs text-stone-500 dark:text-stone-400">
+            {user?.email}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => signOut()}
+          className="shrink-0 text-xs font-medium text-stone-500 hover:text-red-600 dark:text-stone-400 dark:hover:text-red-400"
+        >
+          Sign out
+        </button>
       </div>
     </aside>
   );
