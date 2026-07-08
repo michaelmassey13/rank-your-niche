@@ -317,8 +317,8 @@ export function StoreProvider({
 
   if (!loaded) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-stone-50 dark:bg-stone-950">
-        <div className="text-3xl animate-pulse">🏆</div>
+      <div className="flex h-screen w-screen items-center justify-center bg-paper font-display text-lg italic text-ink/40 dark:bg-paper-dark dark:text-ink-dark/40">
+        <span className="animate-pulse">Pulling your archive…</span>
       </div>
     );
   }

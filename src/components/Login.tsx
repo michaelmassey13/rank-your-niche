@@ -15,24 +15,30 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-stone-50 px-6 text-center dark:bg-stone-950">
-      <div className="text-5xl">🏆</div>
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-8 bg-paper px-6 text-center font-body dark:bg-paper-dark">
       <div>
-        <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100">
+        <div className="font-display text-5xl font-black uppercase tracking-tight text-ink dark:text-ink-dark">
           Rank Your Niche
-        </h1>
-        <p className="mt-1 max-w-sm text-sm text-stone-500 dark:text-stone-400">
-          Sign in to create and access your own private ranking lists.
+        </div>
+        <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.35em] text-ink/50 dark:text-ink-dark/50">
+          A Reader's Ranking Almanac
+        </div>
+      </div>
+
+      <div className="w-full max-w-xs border-y-4 border-double border-ink py-6 dark:border-ink-dark">
+        <p className="font-body italic text-sm text-ink/70 dark:text-ink-dark/70">
+          Subscriber access only. Sign in to file and read your private standings.
         </p>
       </div>
+
       <button
         type="button"
         onClick={handleSignIn}
-        className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 shadow-sm hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800"
+        className="border border-ink px-6 py-2.5 font-mono text-xs uppercase tracking-widest text-ink hover:bg-ink hover:text-paper dark:border-ink-dark dark:text-ink-dark dark:hover:bg-ink-dark dark:hover:text-paper-dark"
       >
         Sign in with Google
       </button>
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="font-mono text-xs text-rule dark:text-rule-dark">{error}</p>}
     </div>
   );
 }

@@ -18,21 +18,23 @@ export default function Modal({ title, onClose, children, wide }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4 dark:bg-black/70"
       onClick={onClose}
     >
       <div
-        className={`max-h-[90vh] w-full ${wide ? "max-w-xl" : "max-w-md"} overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-stone-900`}
+        className={`max-h-[90vh] w-full ${wide ? "max-w-xl" : "max-w-md"} overflow-y-auto border border-ink bg-paper p-7 font-body shadow-[8px_8px_0_0_var(--color-ink)] dark:border-ink-dark dark:bg-paper-dark dark:shadow-[8px_8px_0_0_var(--color-ink-dark)]`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-100">{title}</h2>
+        <div className="mb-5 flex items-start justify-between gap-4 border-b-2 border-double border-ink pb-3 dark:border-ink-dark">
+          <h2 className="font-display text-xl font-bold tracking-tight text-ink dark:text-ink-dark">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+            className="shrink-0 font-mono text-xs uppercase tracking-widest text-rule hover:underline dark:text-rule-dark"
           >
-            ✕
+            Close
           </button>
         </div>
         {children}

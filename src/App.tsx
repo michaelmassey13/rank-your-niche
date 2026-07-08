@@ -16,7 +16,7 @@ function AppShell() {
   const selectedList = selectedListId ? getList(selectedListId) : undefined;
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-paper font-body text-ink dark:bg-paper-dark dark:text-ink-dark">
       <Sidebar
         selectedListId={selectedListId}
         onSelectList={setSelectedListId}
@@ -30,14 +30,14 @@ function AppShell() {
         {selectedList ? (
           <ListView list={selectedList} />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="text-5xl">🏆</div>
-            <h1 className="text-xl font-semibold text-stone-700 dark:text-stone-200">
-              Pick a list, or start a new one
+          <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
+            <div className="font-display text-5xl italic text-ink/20 dark:text-ink-dark/20">§</div>
+            <h1 className="font-display text-2xl font-bold text-ink dark:text-ink-dark">
+              Pick a report to read, or file a new one
             </h1>
-            <p className="max-w-sm text-sm text-stone-500 dark:text-stone-400">
-              Create a category for whatever you want to rank, add a list inside it,
-              define what matters to you, and rank away.
+            <p className="max-w-sm font-body italic text-sm text-ink/60 dark:text-ink-dark/60">
+              Start a section for whatever you want to rank, add a list inside it, define
+              what matters to you, and file your standings.
             </p>
           </div>
         )}
@@ -69,8 +69,8 @@ function Gate() {
 
   if (loading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-stone-50 dark:bg-stone-950">
-        <div className="text-3xl animate-pulse">🏆</div>
+      <div className="flex h-screen w-screen items-center justify-center bg-paper font-display text-lg italic text-ink/40 dark:bg-paper-dark dark:text-ink-dark/40">
+        <span className="animate-pulse">Typesetting…</span>
       </div>
     );
   }

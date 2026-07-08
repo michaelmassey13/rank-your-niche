@@ -4,11 +4,16 @@ export default function TierBadge({ score }: { score: number | null }) {
   const tier = tierFor(score);
   return (
     <div
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-bold text-white"
-      style={{ backgroundColor: tier.color }}
+      className="flex h-10 w-10 shrink-0 -rotate-6 items-center justify-center rounded-full border-2 font-display text-base font-bold"
+      style={{ borderColor: tier.color, color: tier.color }}
       title={`Tier ${tier.label}`}
     >
-      {tier.label}
+      <span
+        className="flex h-full w-full items-center justify-center rounded-full border border-dashed"
+        style={{ borderColor: tier.color }}
+      >
+        {tier.label}
+      </span>
     </div>
   );
 }

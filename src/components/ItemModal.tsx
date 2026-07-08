@@ -63,27 +63,27 @@ export default function ItemModal({ list, existingItem, onClose, onSave }: ItemM
       onClose={onClose}
       wide
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5 font-body text-ink dark:text-ink-dark">
         <div className="flex gap-4">
           <div className="flex flex-col items-center gap-2">
             <div
-              className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed border-stone-300 bg-stone-50 text-2xl text-stone-300 dark:border-stone-700 dark:bg-stone-800"
+              className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden border border-dashed border-ink/40 font-display text-2xl text-ink/30 dark:border-ink-dark/40 dark:text-ink-dark/30"
               onClick={() => fileInputRef.current?.click()}
               role="button"
             >
               {photo ? (
-                <img src={photo} alt="" className="h-full w-full object-cover" />
+                <img src={photo} alt="" className="h-full w-full object-cover grayscale" />
               ) : uploading ? (
                 "…"
               ) : (
-                "📷"
+                "§"
               )}
             </div>
             {photo && (
               <button
                 type="button"
                 onClick={() => setPhoto(null)}
-                className="text-xs text-stone-400 hover:text-red-500"
+                className="font-mono text-[10px] uppercase tracking-widest text-ink/40 hover:text-rule dark:text-ink-dark/40 dark:hover:text-rule-dark"
               >
                 Remove
               </button>
@@ -99,84 +99,88 @@ export default function ItemModal({ list, existingItem, onClose, onSave }: ItemM
 
           <div className="flex flex-1 flex-col gap-3">
             <label className="flex flex-col gap-1">
-              <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
                 Name
               </span>
               <input
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+                className="field-underline border-ink/40 text-sm focus:border-rule dark:border-ink-dark/40 dark:focus:border-rule-dark"
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
                 Date tried
               </span>
               <input
                 type="date"
                 value={dateTried ?? ""}
                 onChange={(e) => setDateTried(e.target.value)}
-                className="rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+                className="field-underline border-ink/40 text-sm focus:border-rule dark:border-ink-dark/40 dark:focus:border-rule-dark"
               />
             </label>
           </div>
         </div>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-stone-600 dark:text-stone-300">Notes</span>
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
+            Notes
+          </span>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
-            className="resize-none rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+            className="field-underline resize-none border-ink/40 font-body italic text-sm focus:border-rule dark:border-ink-dark/40 dark:focus:border-rule-dark"
           />
         </label>
 
         <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium text-stone-600 dark:text-stone-300">Scores</span>
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
+            Scores
+          </span>
           {list.criteria.length === 0 && (
-            <p className="text-xs text-stone-400">
+            <p className="font-body italic text-xs text-ink/40 dark:text-ink-dark/40">
               This list has no criteria yet. Add some from the list header first.
             </p>
           )}
           {list.criteria.map((c) => (
             <div key={c.id} className="flex items-center gap-3">
-              <span className="w-32 shrink-0 truncate text-sm text-stone-600 dark:text-stone-300">
+              <span className="w-32 shrink-0 truncate font-body italic text-sm text-ink/70 dark:text-ink-dark/70">
                 {c.name}
               </span>
               <input
                 type="range"
                 min={SCORE_MIN}
                 max={SCORE_MAX}
-                step={0.5}
+                step={0.1}
                 value={scores[c.id] ?? DEFAULT_SCORE}
                 onChange={(e) =>
                   setScores((s) => ({ ...s, [c.id]: Number(e.target.value) }))
                 }
-                className="flex-1 accent-amber-700"
+                className="flex-1 accent-rule dark:accent-rule-dark"
               />
-              <span className="w-8 shrink-0 text-right text-sm font-semibold text-amber-800 dark:text-amber-300">
+              <span className="w-8 shrink-0 text-right font-mono text-sm font-bold text-rule dark:text-rule-dark">
                 {(scores[c.id] ?? DEFAULT_SCORE).toFixed(1)}
               </span>
             </div>
           ))}
         </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="font-mono text-xs text-rule dark:text-rule-dark">{error}</p>}
 
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="mt-2 flex justify-end gap-4 border-t border-ink/20 pt-4 font-mono text-xs uppercase tracking-widest dark:border-ink-dark/20">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="text-ink/50 hover:text-rule dark:text-ink-dark/50 dark:hover:text-rule-dark"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
+            className="border border-ink px-4 py-2 text-ink hover:bg-ink hover:text-paper dark:border-ink-dark dark:text-ink-dark dark:hover:bg-ink-dark dark:hover:text-paper-dark"
           >
             {existingItem ? "Save changes" : "Add item"}
           </button>

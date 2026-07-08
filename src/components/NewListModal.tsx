@@ -46,9 +46,9 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
 
   return (
     <Modal onClose={onClose} title={`New list in "${category?.name ?? ""}"`}>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5 font-body text-ink dark:text-ink-dark">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
             List name
           </span>
           <input
@@ -56,41 +56,41 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. My Top Picks"
-            className="rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+            className="field-underline border-ink/40 text-sm focus:border-rule dark:border-ink-dark/40 dark:focus:border-rule-dark"
           />
         </label>
 
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
             Scoring criteria
           </span>
-          <p className="text-xs text-stone-400 dark:text-stone-500">
+          <p className="font-body italic text-xs text-ink/50 dark:text-ink-dark/50">
             What should this list score items on? Each item you add gets rated 1–10 on
             these.
           </p>
-          <div className="mt-1 flex flex-wrap gap-1.5">
+          <div className="mt-1 flex flex-wrap gap-2">
             {criteria.map((c, i) => (
               <span
                 key={c + i}
-                className="flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 dark:bg-amber-900/40 dark:text-amber-200"
+                className="flex items-center gap-1.5 border border-ink/40 px-2 py-1 font-mono text-[11px] uppercase tracking-wider text-ink dark:border-ink-dark/40 dark:text-ink-dark"
               >
                 {c}
                 <button
                   type="button"
                   onClick={() => removeCriterion(i)}
-                  className="text-amber-700 hover:text-red-600 dark:text-amber-300"
+                  className="text-ink/40 hover:text-rule dark:text-ink-dark/40 dark:hover:text-rule-dark"
                 >
                   ✕
                 </button>
               </span>
             ))}
             {criteria.length === 0 && (
-              <span className="text-xs text-stone-400 dark:text-stone-600">
+              <span className="font-body italic text-xs text-ink/35 dark:text-ink-dark/35">
                 No criteria added yet
               </span>
             )}
           </div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-3 border-b border-ink/40 pb-1 dark:border-ink-dark/40">
             <input
               value={criterionDraft}
               onChange={(e) => setCriterionDraft(e.target.value)}
@@ -101,32 +101,32 @@ export default function NewListModal({ categoryId, onClose, onCreated }: NewList
                 }
               }}
               placeholder="Add a criterion (e.g. Quality, Price, Fun Factor)"
-              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+              className="flex-1 border-none bg-transparent text-sm outline-none placeholder:italic"
             />
             <button
               type="button"
               onClick={addCriterion}
-              className="rounded-lg border border-stone-300 px-3 py-2 text-sm font-medium hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+              className="font-mono text-xs uppercase tracking-widest text-rule hover:underline dark:text-rule-dark"
             >
               Add
             </button>
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="font-mono text-xs text-rule dark:text-rule-dark">{error}</p>}
 
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="mt-2 flex justify-end gap-4 border-t border-ink/20 pt-4 font-mono text-xs uppercase tracking-widest dark:border-ink-dark/20">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="text-ink/50 hover:text-rule dark:text-ink-dark/50 dark:hover:text-rule-dark"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
+            className="border border-ink px-4 py-2 text-ink hover:bg-ink hover:text-paper dark:border-ink-dark dark:text-ink-dark dark:hover:bg-ink-dark dark:hover:text-paper-dark"
           >
             Create list
           </button>

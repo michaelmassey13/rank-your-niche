@@ -26,66 +26,67 @@ export default function ListView({ list }: { list: List }) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div className="flex-1">
-          {editingName ? (
-            <input
-              autoFocus
-              value={nameDraft}
-              onChange={(e) => setNameDraft(e.target.value)}
-              onBlur={commitName}
-              onKeyDown={(e) => e.key === "Enter" && commitName()}
-              className="w-full rounded-lg border border-stone-300 px-2 py-1 text-2xl font-bold outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
-            />
-          ) : (
-            <h1
-              className="cursor-text text-2xl font-bold text-stone-800 dark:text-stone-100"
-              onClick={() => setEditingName(true)}
-              title="Click to rename"
-            >
-              {list.name}
-            </h1>
-          )}
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
-            {list.criteria.map((c) => (
-              <span
-                key={c.id}
-                className="rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-500 dark:bg-stone-800 dark:text-stone-400"
+    <div className="mx-auto max-w-3xl px-8 py-10 font-body text-ink dark:text-ink-dark">
+      <div className="mb-8 border-b-4 border-double border-ink pb-4 dark:border-ink-dark">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/40 dark:text-ink-dark/40">
+              The Standings
+            </div>
+            {editingName ? (
+              <input
+                autoFocus
+                value={nameDraft}
+                onChange={(e) => setNameDraft(e.target.value)}
+                onBlur={commitName}
+                onKeyDown={(e) => e.key === "Enter" && commitName()}
+                className="field-underline mt-1 w-full font-display text-3xl font-bold text-ink dark:text-ink-dark"
+              />
+            ) : (
+              <h1
+                className="mt-1 cursor-text font-display text-3xl font-bold text-ink dark:text-ink-dark"
+                onClick={() => setEditingName(true)}
+                title="Click to rename"
               >
-                {c.name}
-              </span>
-            ))}
-            <button
-              type="button"
-              onClick={() => setManagingCriteria(true)}
-              className="text-xs text-amber-700 hover:underline dark:text-amber-400"
-            >
-              Edit criteria
-            </button>
+                {list.name}
+              </h1>
+            )}
+            <div className="mt-2 font-body italic text-sm text-ink/60 dark:text-ink-dark/60">
+              Filed under:{" "}
+              {list.criteria.length === 0
+                ? "nothing yet"
+                : list.criteria.map((c) => c.name).join(" · ")}{" "}
+              <button
+                type="button"
+                onClick={() => setManagingCriteria(true)}
+                className="not-italic font-mono text-[11px] uppercase tracking-widest text-rule hover:underline dark:text-rule-dark"
+              >
+                edit
+              </button>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setAddingItem(true)}
+            className="shrink-0 border border-ink px-4 py-2 font-mono text-xs uppercase tracking-widest text-ink hover:bg-ink hover:text-paper dark:border-ink-dark dark:text-ink-dark dark:hover:bg-ink-dark dark:hover:text-paper-dark"
+          >
+            + Add entry
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => setAddingItem(true)}
-          className="shrink-0 rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
-        >
-          + Add item
-        </button>
       </div>
 
       {ranked.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-stone-300 py-16 text-center text-stone-400 dark:border-stone-700">
-          No items yet. Add your first one to start ranking.
+        <div className="border border-dashed border-ink/30 py-16 text-center font-body italic text-ink/40 dark:border-ink-dark/30 dark:text-ink-dark/40">
+          This report has no entries yet. Add your first one to start ranking.
         </div>
       ) : (
-        <ol className="flex flex-col gap-2">
+        <ol className="flex flex-col">
           {ranked.map(({ item, score }, index) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-stone-900"
+              className="flex items-center gap-4 border-b border-ink/20 py-4 dark:border-ink-dark/20"
             >
-              <span className="w-6 shrink-0 text-center text-sm font-medium text-stone-400">
+              <span className="w-10 shrink-0 text-center font-display text-xl italic text-ink/30 dark:text-ink-dark/30">
                 {index + 1}
               </span>
               <TierBadge score={score} />
@@ -93,41 +94,44 @@ export default function ListView({ list }: { list: List }) {
                 <img
                   src={item.photo}
                   alt=""
-                  className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                  className="h-14 w-14 shrink-0 border border-ink/40 object-cover grayscale dark:border-ink-dark/40"
                 />
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-lg dark:bg-stone-800">
-                  🏷️
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center border border-ink/20 font-display text-lg italic text-ink/20 dark:border-ink-dark/20 dark:text-ink-dark/20">
+                  §
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="truncate font-medium text-stone-800 dark:text-stone-100">
+                <div className="flex items-baseline gap-2">
+                  <span className="truncate font-display text-lg font-bold text-ink dark:text-ink-dark">
                     {item.name}
                   </span>
                   {score !== null && (
-                    <span className="shrink-0 text-xs font-semibold text-stone-400">
+                    <span className="shrink-0 font-mono text-xs font-bold text-rule dark:text-rule-dark">
                       {score.toFixed(1)}/10
                     </span>
                   )}
                 </div>
                 {item.notes && (
-                  <p className="truncate text-sm text-stone-500 dark:text-stone-400">
-                    {item.notes}
+                  <p className="truncate font-body italic text-sm text-ink/60 dark:text-ink-dark/60">
+                    &ldquo;{item.notes}&rdquo;
                   </p>
                 )}
                 {item.dateTried && (
-                  <p className="text-xs text-stone-400 dark:text-stone-600">{item.dateTried}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-ink/35 dark:text-ink-dark/35">
+                    Filed {item.dateTried}
+                  </p>
                 )}
               </div>
-              <div className="flex shrink-0 gap-1">
+              <div className="flex shrink-0 items-center gap-2 font-mono text-[11px] uppercase tracking-wider">
                 <button
                   type="button"
                   onClick={() => setEditingItem(item)}
-                  className="rounded-md px-2 py-1 text-xs text-stone-500 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
+                  className="text-ink/50 hover:text-rule dark:text-ink-dark/50 dark:hover:text-rule-dark"
                 >
                   Edit
                 </button>
+                <span className="text-ink/20 dark:text-ink-dark/20">·</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -135,7 +139,7 @@ export default function ListView({ list }: { list: List }) {
                       deleteItem(list.id, item.id);
                     }
                   }}
-                  className="rounded-md px-2 py-1 text-xs text-stone-500 hover:bg-red-50 hover:text-red-600 dark:text-stone-400 dark:hover:bg-red-900/20"
+                  className="text-ink/50 hover:text-rule dark:text-ink-dark/50 dark:hover:text-rule-dark"
                 >
                   Delete
                 </button>

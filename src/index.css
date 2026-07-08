@@ -1,7 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "PT Serif", Georgia, serif;
+  --font-mono: "Courier Prime", ui-monospace, monospace;
+
+  --color-paper: #f4ecd8;
+  --color-paper-dark: #191410;
+  --color-ink: #211c16;
+  --color-ink-dark: #ece1cc;
+  --color-rule: #a8201a;
+  --color-rule-dark: #e2685c;
 }
 
 :root {
@@ -14,11 +24,26 @@ html, body, #root {
 
 body {
   margin: 0;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--color-paper-dark);
+    color: var(--color-ink-dark);
+  }
 }
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: var(--color-rule);
+  color: var(--color-paper);
 }
 
 ::-webkit-scrollbar {
@@ -26,9 +51,31 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(120 90 70 / 0.35);
-  border-radius: 6px;
+  background: rgb(168 32 26 / 0.35);
+  border-radius: 0;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Dotted table-of-contents leader between a label and trailing content */
+.toc-leader {
+  flex: 1 1 auto;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.35;
+  margin: 0 0.4em;
+  min-width: 0.75rem;
+  transform: translateY(-0.3em);
+}
+
+/* Underline-style form field, typewriter aesthetic */
+.field-underline {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid currentColor;
+  border-radius: 0;
+  padding: 0.35em 0.1em;
+}
+.field-underline:focus {
+  outline: none;
 }

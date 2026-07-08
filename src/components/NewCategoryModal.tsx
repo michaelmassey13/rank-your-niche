@@ -22,14 +22,14 @@ export default function NewCategoryModal({ onClose, onCreated }: NewCategoryModa
   }
 
   return (
-    <Modal onClose={onClose} title="New category">
-      <div className="flex flex-col gap-4">
+    <Modal onClose={onClose} title="New section">
+      <div className="flex flex-col gap-5 font-body text-ink dark:text-ink-dark">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
-            Category name
+          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60 dark:text-ink-dark/60">
+            Section name
           </span>
-          <p className="text-xs text-stone-400 dark:text-stone-500">
-            A category is whatever you want to rank things about — hobbies, gear, food,
+          <p className="font-body italic text-xs text-ink/50 dark:text-ink-dark/50">
+            A section is whatever you want to rank things about — hobbies, gear, food,
             anything. You'll create lists inside it next.
           </p>
           <input
@@ -38,26 +38,26 @@ export default function NewCategoryModal({ onClose, onCreated }: NewCategoryModa
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="e.g. Board Games, Hiking Trails, Sneakers"
-            className="mt-1 rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-500 dark:border-stone-700 dark:bg-stone-800"
+            className="field-underline mt-1 border-ink/40 text-sm focus:border-rule dark:border-ink-dark/40 dark:focus:border-rule-dark"
           />
         </label>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="font-mono text-xs text-rule dark:text-rule-dark">{error}</p>}
 
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="mt-2 flex justify-end gap-4 border-t border-ink/20 pt-4 font-mono text-xs uppercase tracking-widest dark:border-ink-dark/20">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="text-ink/50 hover:text-rule dark:text-ink-dark/50 dark:hover:text-rule-dark"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
+            className="border border-ink px-4 py-2 text-ink hover:bg-ink hover:text-paper dark:border-ink-dark dark:text-ink-dark dark:hover:bg-ink-dark dark:hover:text-paper-dark"
           >
-            Create category
+            Create section
           </button>
         </div>
       </div>
